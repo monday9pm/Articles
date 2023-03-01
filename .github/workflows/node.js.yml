@@ -30,7 +30,7 @@ jobs:
         
     # from Github Repository Secrets
     - run: echo "Generate Configs..."
-    - run: echo "${{secrets.TEST}}"
+    - run: echo "$TEST"
     - run: npm ci
     - run: npm run build --if-present
     - run: npm start

@@ -1,0 +1,25 @@
+{
+  "name": "monday9pm-articles",
+  "version": "1.0.0",
+  "description": "Articles for Monday 9pm",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monday9pm/Articles.git"
+  },
+  "keywords": [
+    "mediumapi",
+    "documents",
+    "translator"
+  ],
+  "author": "Jaeyeoul Ahn <jb7959@naver.com> (https://github.com/jb7959)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/monday9pm/Articles/issues"
+  },
+  "homepage": "https://github.com/monday9pm/Articles#readme",
+}

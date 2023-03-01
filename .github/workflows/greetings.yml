@@ -1,0 +1,16 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: '@${{ github.actor }}님, 문제를 말씀해주셔서 고맙습니다!'
+        pr-message: "@${{ github.actor }}님, 정성어린 글 고맙습니다!"

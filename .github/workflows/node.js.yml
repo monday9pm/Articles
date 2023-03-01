@@ -22,6 +22,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: Ana06/get-changed-files@v2.2.0
+      id: abc
+      with:
+        format: space-delimited
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Printing
+      run: |
+        echo "All:"
+        echo "${{ steps.abc.outputs.all }}"
+        echo "Added:"
+        echo "${{ steps.abc.outputs.added }}"
+        echo "Removed:"
+        echo "${{ steps.abc.outputs.removed }}"
+        echo "Renamed:"
+        echo "${{ steps.abc.outputs.renamed }}"
+        echo "Modified:"
+        echo "${{ steps.abc.outputs.modified }}"
+        echo "Added+Modified:"
+        echo "${{ steps.abc.outputs.added_modified }}"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:

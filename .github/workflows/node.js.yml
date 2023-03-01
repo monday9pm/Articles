@@ -27,6 +27,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        
+    # from Github Repository Secrets
+    - run: echo "Generate Configs..."
+    - run: echo "${{secrets.TEST}}"
     - run: npm ci
     - run: npm run build --if-present
     - run: npm start

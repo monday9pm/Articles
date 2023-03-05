@@ -1,4 +1,10 @@
-const GithubActionHelper = require('hermes-poster/src/utils/github-action-helper');
+const { HermesPoster } = require('hermes-poster')
 
-console.log("monday9pm-articles");
-GithubActionHelper.loadSecret();
+const hp = new HermesPoster(
+    'action-secret.conf',
+    'action-articles.conf',
+    'https://raw.githubusercontent.com/monday9pm/Articles/main'
+);
+hp.run();
+
+console.log("Hello monday9pm articles !");

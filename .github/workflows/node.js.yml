@@ -27,12 +27,14 @@ jobs:
       with:
         format: space-delimited
         token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Printing
+    # from Git diff
+    - name: Update files
       run: |
         echo "All:"
         echo "${{ steps.abc.outputs.all }}"
-        echo "Added:"
+        echo "Added: These will publish to others"
         echo "${{ steps.abc.outputs.added }}"
+        echo "${{ steps.abc.outputs.added }}" >> action-articles.conf
         echo "Removed:"
         echo "${{ steps.abc.outputs.removed }}"
         echo "Renamed:"
@@ -49,7 +51,7 @@ jobs:
         
     # from Github Repository Secrets
     - run: echo "Generate Configs..."
-    - run: echo "${{ secrets.TEST_1 }}" >> action-secret.json
+    - run: echo "${{ secrets.HERMES_POSTER }}" >> action-secret.conf
     - run: npm ci
     - run: npm run build --if-present
     - run: npm start

@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/monday9pm/Articles#readme",
   "dependencies": {
-    "hermes-poster": "^0.0.1-beta.3"
+    "hermes-poster": "^0.0.1-beta.4"
   }
 }

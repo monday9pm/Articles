@@ -7,7 +7,7 @@ Tags: Article
 
 When developing software, we want to ensure that our code is working correctly and efficiently. This is where test code comes into play. Test code is a set of code that is written specifically to test the functionality of the main code. In this blog post, we will discuss why it is important to use test code when developing software.
 
-![Xp - loops](articles/2023/jaeyeoul-ahn/Why-we-should-use-test-code/assets/Untitled.png)
+![Xp - loops](assets/Untitled.png)
 
 Xp - loops
 

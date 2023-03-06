@@ -43,27 +43,27 @@ Google Project Management의 총 6가지의 강좌를 듣고 각 단계별 과�
 
 방법론만 배우는것은 아니고, 실제 도구를 사용하는 방법도 배운다. 여기서는 Asana를 이용한 방법을 알려주며, 이외에도 다양한 Template의 문서를 제공해준다. 문서만 가지고 있어도 도움이 될 것같다.
 
-![Untitled](assets/Untitled%201.png)
+![Untitled](assets/Untitled1.png)
 
 해당 수업의 진행방식은 강의, 읽기자료, 미니게임, 시험, 동료와의 상호평가 과제로 구성된다. 각 단계별 쉬는 시간으로 실제 구글직원의 이야기도 사례중심으로 제공한다.
 
 여기서 살짝 아쉬웠던 부분이 동료와의 상호평가다. 채점을 위한 기준표는 제공이 되지만, 제한된 문제상황과 그에 맞는 답변이 정해져있어서 다들 비슷한 답변을 주고 받는다. 또한 수강생끼리 서로 주고받는 내용이라 전문적인 피드백은 기대하기 어렵다. Coursera 플랫폼에서의 한계점일 수도 있다고 생각이 들었다. 아니면 간접경험으로는 얻을 수 없는 지식일 수도 있다고 생각된다.
 
-![Untitled](assets/Untitled%202.png)
+![Untitled](assets/Untitled2.png)
 
 그래도 인상깊은게, 다양한 국가의 사람들이 24시간 365일 자유롭게 드나들며 학습을 한다. 함께 공부를 진행하는 짝꿍들은 없을 것이라고 생각했다. 그런데 있었다! 나와 같이 함께 주말에 몰아서 수강하는 사람들이 같은 페이스로 진행을 하고 있었다. 동료와 상호평가시간에 알 수 있었는데, 계속 같은 학생과 채점을 주고받고 있었다. 
 
-![Untitled](assets/Untitled%203.png)
+![Untitled](assets/Untitled3.png)
 
 마무리로는 한번 더 취업에 관련된 특강을 진행해준다. 한국에서 취업을 할 때도 나름 도움될 내용들을 알려준다. 다만, 취업준비중에 듣고 경험한 내용들이라서 빠르게 넘어갔다.
 
-![Untitled](assets/Untitled%204.png)
+![Untitled](assets/Untitled4.png)
 
 수료가 끝나면 아래와 같이 credly와 Coursera에서 Certificate를 제공한다.
 
-![Untitled](assets/Untitled%205.png)
+![Untitled](assets/Untitled5.png)
 
-![Untitled](assets/Untitled%206.png)
+![Untitled](assets/Untitled6.png)
 
 ---
 

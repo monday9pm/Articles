@@ -1,0 +1,32 @@
+name: Git differ
+
+on:
+  pull_request:
+    branches: [ "main", "draft" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: Ana06/get-changed-files@v2.2.0
+      id: abc
+      with:
+        format: space-delimited
+        token: ${{ secrets.GITHUB_TOKEN }}
+    # from Git diff
+    - name: Update files
+      run: |
+        echo "All:"
+        echo "${{ steps.abc.outputs.all }}"
+        echo "Added: These will publish to others"
+        echo "${{ steps.abc.outputs.added }}"
+        echo "Removed:"
+        echo "${{ steps.abc.outputs.removed }}"
+        echo "Renamed:"
+        echo "${{ steps.abc.outputs.renamed }}"
+        echo "Modified:"
+        echo "${{ steps.abc.outputs.modified }}"
+        echo "Added+Modified:"
+        echo "${{ steps.abc.outputs.added_modified }}"

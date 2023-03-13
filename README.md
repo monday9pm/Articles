@@ -17,3 +17,7 @@ This project aims to support active article activities within the community and 
 ---
 
 ![Monday 9PM](https://cdn-images-1.medium.com/max/174/1*QcaQ7uy203_3je606_qzuw@2x.png)
+
+---
+# Have to read 
+### 1. [HOW TO USE?](HOWTO.md)

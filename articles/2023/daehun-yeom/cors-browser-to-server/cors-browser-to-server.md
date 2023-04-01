@@ -96,7 +96,7 @@ If the two origins are scheme/host/port triples, the two origins are the same if
 
 - Preflight Request 란?
     - Preflight Request는 실제 요청 이전에 요청이 가능한지를 판단하는 단계로, 브라우저에서 해당 정보를 사전 검증합니다.
-    - ![img.png](../../Articles/articles/2023/daehun-yeom/cors-browser-to-server/assets/preflight.png)
+    - ![img.png](assets/preflight.png)
     - 실제 요청 이전에 HTTP OPTIONS method가 호출되어 서버와 통신하는 단계가 추가됩니다.
     - 서버는 Preflight Request이 들어와도 실제 요청에 대한 리소스 접근이 이루어지는것은 아니며 검증만을 수행하게 됩니다.
     - 브라우저는 Preflight Request의 응답 정보를 확인하여, 실제 요청을 보내도 되는지를 판단합니다.
@@ -290,7 +290,7 @@ Access-Control-Allow-Credentials: true
 7. 브라우저는 preflight request에 대한 검증이 완료되면, Actual Request을 전송합니다.
 8. 서버는 Actual Request에 대한 처리를 수행하고, 해당 요청에 대한 응답을 생성합니다.
 
-![img_1.png](../../Articles/articles/2023/daehun-yeom/cors-browser-to-server/assets/case.png)
+![img_1.png](assets/case.png)
 - 정리하자면 브라우저의 요청 정보에 따라 사전 검증 단계가 추가되며, 해당 단계를 통해 도메인 허용 여부/헤더 포함 여부등을 서버와 브라우저에서 각각 검증하게 됩니다.
 
 #### 서버 동작 예제

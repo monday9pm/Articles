@@ -277,5 +277,6 @@ fabric.properties
 
 # Local History for Visual Studio Code
 .history/
+.DS_Store
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node,WebStorm,Intellij,VisualStudioCode

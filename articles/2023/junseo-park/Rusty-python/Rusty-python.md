@@ -29,7 +29,7 @@ Python은 공식적으로 C와 C++을 바인딩하는 것을 제공합니다. �
 
 그래도 어쩔 수 없이 C, C++을 다시 해야하나 갈등하고 있는 저에게 한줄기의 희망이 내려온 프로젝트가 있었습니다.
 
-## PyO3
+## PyO3를 이용하여 Python에 Rust를 바인딩하기
 ![many_pyo3_projects](assets/many_pyo3_projects.png)
 
 ruff 프로젝트가 인기가 많아진 이후로 Python의 일부 core 모듈을 Rust로 대체하여 작업하는 라이브러리들이 점점 많이 생겨나고 있습니다.  pydantic의 core를 Rust로 재작성이 되었다던가, pandas를 Rust로 재작성한 polars 프로젝트라던가 등등 그리고 하나같이 그 라이브러리들이 기존의 라이브러리를 존재를 위협할 정도로 큰 성능 향상이 있었습니다. 그리고 그 프로젝트들의 중심에는 PyO3라는 것이 있었습니다.
@@ -70,7 +70,7 @@ py_rust_boost라는 이름을 import 해주고, 그 다음에 위에 작성되�
 
 그래서 튜토리얼에서는 세세한 벤치마크를 위해서 [flamegraph](https://github.com/brendangregg/FlameGraph)로 표현 할 수 있는 [py-spy](https://github.com/benfred/py-spy)라는 라이브러리를 사용합니다.
 
-Flamegraph는 Performance Engineering로 아주 저명한 Brendan gregg께서 만들었습니다. Flamegraph에 대해 짤막하게 설명하면 소프트웨어의 성능 분석 및 프로파일링을 위해 사용되는 시각화 도구입니다. 주로 프로그램의 실행 시간을 각 함수 또는 코드 조각에 할당하여 시각적으로 나타냅니다. Flamegraph 형식으로 나온 파일들은 svg 파일로 생성되며 웹에서 아래와 같이 간단하게 볼 수 있습니다.
+Flamegraph는 Performance Engineering로 아주 저명한 [Brendan gregg](https://en.wikipedia.org/wiki/Brendan_Gregg)께서 만들었습니다. Flamegraph에 대해 짤막하게 설명하면 소프트웨어의 성능 분석 및 프로파일링을 위해 사용되는 시각화 도구입니다. 주로 프로그램의 실행 시간을 각 함수 또는 코드 조각에 할당하여 시각적으로 나타냅니다. Flamegraph 형식으로 나온 파일들은 svg 파일로 생성되며 웹에서 아래와 같이 간단하게 볼 수 있습니다.
 
 ![flame_graph](assets/flame_graph.png)
 

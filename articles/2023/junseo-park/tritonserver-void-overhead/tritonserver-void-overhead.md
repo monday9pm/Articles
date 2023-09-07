@@ -49,12 +49,91 @@ dlpack_tensor = to_dlpack(tensor)
 tf_tensor = tf.experimental.from_dlpack(dlpack_tensor)
 ```
 
-이러면 끝입니다. 단 두줄의 Python 코드로 PyTorch의 GPU 데이터를 TensorFlow GPU 데이터로 복사조차 하지 않고 간단하게 옮겼습니다.
-
+이러면 끝입니다. 단 두줄의 Python 코드로 PyTorch의 GPU 데이터를 TensorFlow GPU 데이터로 복사조차 하지 않고 간단하게 옮겼습니다. 
 이 DLPack은 점점 표준이 되어가면서, Model Serving Server인 Triton Inference Server에서 빛을 발하게 되었습니다.
 
 ## Triton Inference Server와 DLPack의 시너지
 
-Triton Inference Server는 Model Serving Server이며, 여러 백엔드 프레임워크를 지원합니다. TensorRT Backend, PyTorch Backend, Tensorflow Backend, 심지어 Python Backend도 사용할 수 있습니다.
+Triton Inference Server는 Model Serving Server이며, 여러 백엔드 프레임워크를 지원합니다. TensorRT Backend, PyTorch Backend, Tensorflow Backend, 심지어 Python Backend도 사용할 수 있습니다. 이 많은 백엔드 프레임워크는 Ensemble을 통해서 연결이 가능합니다.
 
-저는 주로 앙상블 기법을 사용하여 TensorRT 모델에서 나온 결과를 Python으로 보내서 후처리 합니다. 
+![Basic Ensemble](assets/basic_ensemble.png)
+
+위 사진과 같이 image_preprocess_model을 Python 코드로 제작하고 Classification model을 TensorRT로도 Segmentation_model도 Tensorflow로도 만들어서 Ensemble을 할 수 있습니다. 이러면 사용자는 내부의 상황을 몰라도 Image만 서버에 전달 해주면 내부의 파이프라인을 타고 Classfication, Segmentation 결과가 나오는 것입니다.
+
+여기서 더 복잡한 파이프라인이 작성된다면 어떨까요? 예를 들어서 모델에서 나온 값을 Pytorch 코드로 GPU를 사용하는 후처리가 추가된다거나, 모델 -> 후처리 -> 모델이라던가, 이런 상황이 오면 매번 CPU와 GPU를 오가는건 매우 손해입니다. 이에 대해 Triton Inference Server의 Python Backend 개발자가 문제점을 느끼고, DLPack이 추가가되면서 해결이 되었습니다.
+
+기존의 Python Backend는 값이 전달되면 무조건 CPU로 변환되는 과정이 있었는데, DLPack이 지원되면서 값이 전달된 것을 to_dlpack을 통해서 오버헤드 없이 GPU 데이터를 사용할 수 있게 되었습니다.
+
+```python
+from torch.utils.dlpack import from_dlpack
+import triton_python_backend_utils as pb_utils
+
+class TritonPythonModel:
+
+  def execute(self, requests):
+    ...
+    input0 = pb_utils.get_input_tensor_by_name(request, "RAW_IMAGE")
+
+    # Python Backend 텐서를 복사하지 않고 PyTorch 텐서로 변환했습니다.
+    pytorch_tensor = from_dlpack(input0.to_dlpack())
+```
+
+이런 작업을 거치면 pytorch_tensor는 GPU 데이터를 가지고 있게 되는 것입니다. 이 GPU Pytorch Tensor로 GPU에 적합한 후처리 작업을 진행 할 수 있습니다. CPU로는 처리가 느린 grid_sample 같은 것도 빠르게 할 수 있죠. 자 그럼 실험을 해봅시다.
+
+## 실험
+
+간단한 파이프라인인 TensorRT Model(Mask RCNN) -> Python Pytorch Code(postprocess)를 ensemble한 파이프라인을 측정해보겠습니다. 한 실험은 DLPack을 사용하는 Python Code, 다른 실험은 DLPack을 사용하지 않고 CPU로 받은 값을 GPU로 변환한 다음 처리하는 Python Code입니다. 두 실험 모두 postprocess의 프로세스 개수는 4개로 실험했습니다. 
+
+아래는 Request를 numpy로 가져온 후 torch.tensor로 Pytorch Tensor로 바꾼 후에, GPU 메모리로 다시 옮기는 과정입니다. DLPack을 사용하지 않으면 numpy로 받아와야 합니다.
+```python
+...
+# Converting numpy arrays to torch tensors
+num_detections_box_outputs = (
+    torch.tensor(num_detections_box_outputs.as_numpy()).squeeze()
+)
+detection_boxes_box_outputs = (
+    torch.tensor(detection_boxes_box_outputs.as_numpy()).squeeze().cuda()
+)
+detection_scores_box_outputs = (
+    torch.tensor(detection_scores_box_outputs.as_numpy()).squeeze().cuda()
+)
+detection_classes_box_outputs = (
+    torch.tensor(detection_classes_box_outputs.as_numpy()).squeeze().cuda()
+)
+detection_masks = torch.tensor(detection_masks.as_numpy()).squeeze().cuda()
+...
+```
+간단한 파이프라인인데 Input(CPU) -> Mask RCNN(GPU) -> postprocess(CPU -> GPU) -> output(CPU) 무려 4번의 데이터 교환이 일어나는 모습을 볼 수 있습니다. 더 복잡한 파이프라인으로 가면 엄청나게 많은 데이터 교환이 일어날 겁니다.
+
+아래는 Request를 DLPack을 통해서 gpu tensor로 가져오는 코드입니다.
+```python
+...
+# 입력을 dlpack으로 가져와서 torch.from_dlpack으로 gpu tensor로 가져옵니다.
+# 이를 통해서 GPU -> CPU의 병목현상을 해결 할 수 있습니다.
+num_detections_box_outputs = torch.squeeze(
+    from_dlpack(num_detections_box_outputs.to_dlpack())
+)
+detection_boxes_box_outputs = torch.squeeze(
+    from_dlpack(detection_boxes_box_outputs.to_dlpack())
+)
+detection_scores_box_outputs = torch.squeeze(
+    from_dlpack(detection_scores_box_outputs.to_dlpack())
+)
+detection_classes_box_outputs = torch.squeeze(
+    from_dlpack(detection_classes_box_outputs.to_dlpack())
+)
+detection_masks = torch.squeeze(from_dlpack(detection_masks.to_dlpack()))
+argument = from_dlpack(argument.to_dlpack())
+...
+```
+반면 DLPack을 사용함으로써 Input(CPU) -> Mask RCNN(GPU) -> postprocess(GPU) -> output(CPU) 단 2번의 데이터 교환이 일어나는 모습을 볼 수 있습니다. 과연 효과가 있는지 perf_analyzer로 측정을 해봅시다.
+
+![Super Overhead](assets/super_overhead.png)
+위는 DLPack을 사용하지 않는 numpy로 가져오고, tensor로 바꾸고, gpu 데이터로 다시 옮긴 작업입니다. 보시다시피 GPU 사용량이 들쑥날쑥한게 별로 좋아보이진 않군요.
+
+![No Overhead](assets/no_overhead.png)
+반면 DLPack을 사용하여 데이터 교환을 줄인 작업입니다. GPU 사용량도 훨씬 좋아지고, throughput도 1.5배 증가하였고, latency도 1.4배 가량 감소하였습니다. (이 두 작업은 다른 프로세스에 학습하고 있는 프로세스가 있어, mask_rcnn 부부닁 queue가 느려졌습니다.)
+
+## 결론
+
+[결론 쓰고 중간중간 사진넣고 글 다듬기] 

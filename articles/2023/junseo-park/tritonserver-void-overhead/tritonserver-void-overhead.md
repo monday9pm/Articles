@@ -1,8 +1,14 @@
 # Triton Inference Server의 파이프라인 오버헤드 줄이기
 
+![CPU GPU 메인보드](assets/cpu_gpu.png)
+
 기본적으로 CPU와 GPU는 연산하는 "위치"가 다릅니다. CPU는 메인보드 대략 중앙에 있는 거대한 쿨러 속에 숨어있고, GPU는 그 아래에 요즘따라 점점 거대해지고 있는 쇳덩어리가 바로 그것이죠. 그리고 그것을 연결해주는 것이 PCIe 버스가 있습니다. 이 PCIe 버스에 CPU의 데이터와 GPU의 데이터가 오가죠.
 
-많은 사람들이 간과하는 중요한 부분이 바로 이 PCIe 버스를 통한 데이터 전송입니다. 예시를 들어볼까요? 저희가 인천에서 모란으로 이사를 간다고 생각해봅시다. 이사를 가려면, 인천 집에 있는 물건들을 모란 집으로 옮겨야 합니다. 이럴 때 대부분 트럭을 사용하거나, 그에 준하는 큰 차를 이용합니다.
+많은 사람들이 간과하는 중요한 부분이 바로 이 PCIe 버스를 통한 데이터 전송입니다.
+
+![이사](assets/move_out.png)
+
+예시를 들어볼까요? 저희가 인천에서 모란으로 이사를 간다고 생각해봅시다. 이사를 가려면, 인천 집에 있는 물건들을 모란 집으로 옮겨야 합니다. 이럴 때 대부분 트럭을 사용하거나, 그에 준하는 큰 차를 이용합니다.
 
 이제 인천 집은 CPU, 모란 집은 GPU, 트럭은 PCIe 버스로 생각봅시다.
 
@@ -16,11 +22,15 @@
 
 ## 모델 파이프라인
 
+![End-to-End 모델](assets/end-to-end.png)
+
 옛날에는 많은 사람들이 인공지능이 굉장히 복잡하며, 다양한 일들을 수행할 수 있을 것이라고 생각했습니다. 지금도 실제로 인공지능은 굉장히 복잡한 일들을 수행하고 있죠. 또한 딥 러닝과 같은 최신 기술의 등장으로, 원시 데이터 입력부터 최종 결과 출력까지 모든 과정을 하나의 모델로 처리할 수 있게 되었는데, 이를 "End-to-end 모델"이라고 합니다.
 
-그러나 모든 Task에 End-to-end 모델이 효과적이진 않았습니다. 예시로, 모델에서 나온 값을 검증된 알고리즘에 덧붙여서 더 좋은 성능을 이끌어 내기도 하며, 여러 모델의 예측을 조합하여 전반적인 성능을 향상시키는 앙상블 기법을 사용하기도 하고, 모델에서 나온 값은 알고리즘을 통과한 뒤 다시 다른 모델로 다시 처리하는 경우도 있습니다. 
+![앙상블 파이프라인](assets/model_ensemble.png)
 
-이러한 경우는 모델의 성능을 상승시킬 수는 있으나, 모델의 속도는 어떨까요? 파이프라인이 복잡할 수록, 데이터의 이동도 많아집니다. 데이터의 이동이 많아진다는 것은, CPU와 GPU를 오가는 과정이 많아진다는 의미이므로 오버헤드가 생길수 있습니다.
+그러나 모든 Task에 End-to-end 모델이 효과적이진 않았습니다. 예시로, 모델에서 나온 값을 검증된 알고리즘에 덧붙여서 더 좋은 성능을 이끌어 내기도 하며, 여러 모델의 예측을 조합하여 전반적인 성능을 향상시키거나, 모델에서 나온 값은 알고리즘을 통과한 뒤 다시 다른 모델로 다시 처리하는 경우도 있습니다. 이렇게 End to End와는 다르게 여러 과정을 통과시켜서 Output을 내는 기법은, Ensemble 기법이라고 합니다. 
+
+이러한 경우는 모델의 성능을 상승시킬 수는 있습니다. 하지만 모델의 속도 관점에서 보면 어떨까요? 파이프라인이 복잡할 수록, 데이터의 이동도 많아집니다. 데이터의 이동이 많아진다는 것은, CPU와 GPU를 오가는 과정이 많아진다는 의미이므로 오버헤드가 생길수 있습니다.
 
 모델에서 나온 GPU 데이터를 후처리를 하기 위해 CPU 데이터로 전환하고 후처리를 한 후에 GPU 데이터로 바꾸고 다시 모델에 넣는 경우를 생각하면, 가능한 후처리 코드를 GPU 코드로 바꾸어서 데이터 이동이 없게 하는게 가장 효율적인 방법이겠죠. 하지만 GPU 데이터를 다른 프로세스의 GPU 데이터에 맞게 전송하기란 꽤나 힘든 일입니다.
 
@@ -82,9 +92,9 @@ class TritonPythonModel:
 
 ## 실험
 
-간단한 파이프라인인 TensorRT Model(Mask RCNN) -> Python Pytorch Code(postprocess)를 ensemble한 파이프라인을 측정해보겠습니다. 한 실험은 DLPack을 사용하는 Python Code, 다른 실험은 DLPack을 사용하지 않고 CPU로 받은 값을 GPU로 변환한 다음 처리하는 Python Code입니다. 두 실험 모두 postprocess의 프로세스 개수는 4개로 실험했습니다. 
+간단한 파이프라인인 TensorRT Model(Mask RCNN) -> Python Pytorch Code(postprocess)를 ensemble한 파이프라인을 측정해보겠습니다. 해당 후처리 함수는 grid_sample이 포함되어 있어 GPU로 동작하는 것이 빠른 함수입니다. 이 함수를 한 실험에는 DLPack을 사용하는 Python Code, 다른 실험은 DLPack을 사용하지 않고 CPU로 받은 값을 GPU로 변환한 다음 처리하는 Python Code로 실험을 진행했고, 이 두 실험 모두 postprocess의 프로세스 개수는 4개로 실험했습니다.
 
-아래는 Request를 numpy로 가져온 후 torch.tensor로 Pytorch Tensor로 바꾼 후에, GPU 메모리로 다시 옮기는 과정입니다. DLPack을 사용하지 않으면 numpy로 받아와야 합니다.
+아래는 Request를 numpy로 가져온 후 torch.tensor로 Pytorch Tensor로 바꾼 후에, GPU 메모리로 다시 옮기는 과정입니다. DLPack을 사용하지 않으면 기본적으로 numpy로 받아와야 합니다.
 ```python
 ...
 # Converting numpy arrays to torch tensors
@@ -103,7 +113,7 @@ detection_classes_box_outputs = (
 detection_masks = torch.tensor(detection_masks.as_numpy()).squeeze().cuda()
 ...
 ```
-간단한 파이프라인인데 Input(CPU) -> Mask RCNN(GPU) -> postprocess(CPU -> GPU) -> output(CPU) 무려 4번의 데이터 교환이 일어나는 모습을 볼 수 있습니다. 더 복잡한 파이프라인으로 가면 엄청나게 많은 데이터 교환이 일어날 겁니다.
+간단한 파이프라인인데 Input(CPU) -> Mask RCNN(GPU) -> postprocess(CPU -> GPU) -> output(CPU) 무려 4번의 데이터 교환이 일어나는 모습을 볼 수 있습니다.
 
 아래는 Request를 DLPack을 통해서 gpu tensor로 가져오는 코드입니다.
 ```python
@@ -126,14 +136,16 @@ detection_masks = torch.squeeze(from_dlpack(detection_masks.to_dlpack()))
 argument = from_dlpack(argument.to_dlpack())
 ...
 ```
-반면 DLPack을 사용함으로써 Input(CPU) -> Mask RCNN(GPU) -> postprocess(GPU) -> output(CPU) 단 2번의 데이터 교환이 일어나는 모습을 볼 수 있습니다. 과연 효과가 있는지 perf_analyzer로 측정을 해봅시다.
+반면 DLPack을 사용함으로써 Input(CPU) -> Mask RCNN(GPU) -> postprocess(GPU) -> output(CPU) 단 2번의 데이터 교환이 일어나는 모습을 볼 수 있습니다. 과연 효과가 있는지 [perf_analyzer](https://github.com/triton-inference-server/client/blob/main/src/c++/perf_analyzer/README.md)로 측정을 해봅시다.
 
 ![Super Overhead](assets/super_overhead.png)
-위는 DLPack을 사용하지 않는 numpy로 가져오고, tensor로 바꾸고, gpu 데이터로 다시 옮긴 작업입니다. 보시다시피 GPU 사용량이 들쑥날쑥한게 별로 좋아보이진 않군요.
+위는 DLPack을 사용하지 않는 numpy로 가져오고, tensor로 바꾸고, gpu 데이터로 다시 옮긴 작업입니다. throughput이 초당 81개, 1장의 처리에 latency가 98818 usec이 소모되었습니다. 더군다나 GPU 사용량이 40~90% 정도에서 들쑥날쑥했습니다.
 
 ![No Overhead](assets/no_overhead.png)
-반면 DLPack을 사용하여 데이터 교환을 줄인 작업입니다. GPU 사용량도 훨씬 좋아지고, throughput도 1.5배 증가하였고, latency도 1.4배 가량 감소하였습니다. (이 두 작업은 다른 프로세스에 학습하고 있는 프로세스가 있어, mask_rcnn 부부닁 queue가 느려졌습니다.)
+반면 DLPack을 사용하여 데이터 교환을 줄인 작업입니다. GPU 사용량도 훨씬 좋아지고, throughput이 초당 142.6개 약 1.8배 증가하였고, latency는 56239 usce이 소모되었고, 약 1.8배 가량 감소하였습니다. GPU 사용량되 꾸준히 90~100%를 유지했습니다.
+
+(이 두 작업은 다른 프로세스에 학습하고 있는 프로세스가 있어, mask_rcnn 부분의 queue가 느려졌습니다.) 
 
 ## 결론
 
-[결론 쓰고 중간중간 사진넣고 글 다듬기] 
+DLPack을 이용해서 Triton Inference Server의 앙상블 파이프라인의 오버헤드를 줄여보았습니다. 비교적 간단한 파이프라인인데도 성능 감소가 뚜렷하게 나타났으며, 더 복잡한 파이프라인에서 이 데이터 이동을 고려하지 않고 파이프라인을 작성하면 매우 좋지 않는 성능을 보일 것입니다. 그래서 앙상블 파이프라인의 데이터가 어디에 있나를 고려하면서 파이프라인을 작성하면, 더 나은 성능을 가져 갈 수 있을 겁니다.

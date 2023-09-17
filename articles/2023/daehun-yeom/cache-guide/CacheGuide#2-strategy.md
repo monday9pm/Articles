@@ -144,7 +144,7 @@ http://highscalability.com/blog/2012/4/17/youtube-strategy-adding-jitter-isnt-a-
     - volatile-lfu: TTL이 설정된 키들 중 사용빈도 수가 적은 키를 제거합니다.
     - allkeys-random: 무작위로 키를 제거합니다.
     - volatile-random: TTL이 설정된 키들 중 무작위로 키를 제거합니다.
-    - volatile-ttl: TTL이 짧은 키를 제거합니다.
+    - volatile-ttl: TTL이 짧은 키를 제거합니다.  
       [https://redis.io/docs/reference/eviction/](https://redis.io/docs/reference/eviction/)
 
 ## 참조

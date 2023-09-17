@@ -117,8 +117,6 @@ PER(Probablistic Early Recomputation) / Jittering
   이렇게 하면, TTL이 동일한 데이터가 일정한 간격으로 만료되므로, 모든 데이터가 동시에 만료되는 문제를 방지할 수 있습니다.
 - 참고 : [https://meetup.nhncloud.com/posts/251](https://meetup.nhncloud.com/posts/251)
 
-TTL 전략
-- 
 ```
 jitter : 디지털 신호에서 발생하는 신호의 차이, 불안정성을 의미
 ```

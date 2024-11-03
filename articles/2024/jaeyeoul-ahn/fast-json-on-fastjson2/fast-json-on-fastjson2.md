@@ -12,7 +12,7 @@
 
 개발자라면 한 번쯤은 JSON을 다뤄보게 됩니다. 특히 백엔드 API 개발자의 경우, 데이터를 JSON 포맷으로 변환하거나, JSON 형식의 텍스트 데이터를 프로그래밍 언어의 특정 타입으로 변환하는 과정이 필요하죠.
 
-![Json 직렬화](assets/Pasted%20image%2020241013212607.png)
+![Json 직렬화](assets/20241013212607.png)
 > 출처: https://einarwh.wordpress.com/2020/05/13/proper-json-and-property-bags/
 
 특히 RESTful API가 대중화되면서 JSON의 사용률도 크게 증가했습니다. 과거 불편했던 인터페이스 표준으로 자리 잡았던 SOAP과 XML은 점차 자리를 잃고, 그 자리를 RESTful API와 JSON이 차지하게 되었죠.
@@ -28,10 +28,10 @@ Java 진영에서 대표적인 프레임워크인 Spring Framework는 HTTP 기�
 아래 표를 보면, 스프링에서 기본적으로 제공하는 Jackson이나 Gson은 성능이 아주 뛰어난 편은 아닙니다. 가장 빠른 것으로 알려진 Alibaba의 fastjson2와 비교하면 Jackson이나 Gson은 약 두 배 정도 느리며, fastjson2 외에도 더 빠른 구현체들이 존재합니다.
 
 #### 역직렬화
-![벤치마킹](assets/Pasted%20image%2020241013212221.png)
+![벤치마킹](assets/20241013212221.png)
 
 #### 직렬화
-![벤치마킹](assets/Pasted%20image%2020241013212233.png)
+![벤치마킹](assets/20241013212233.png)
 > 출처: https://github.com/fabienrenaud/java-json-benchmark
 
 저도 현업에서 API 요청당 약 500만 개 이상의 JSON 객체를 다뤄야 하는 상황이 있었고, 이와 관련해 JSON 직렬화를 주요 개선 대상으로 삼아 작업한 적이 있습니다. 그 과정에서 FastJson2를 적극적으로 적용했고, 이를 통해 상당 부분 문제를 해결할 수 있었습니다.
@@ -42,7 +42,7 @@ Java 진영에서 대표적인 프레임워크인 Spring Framework는 HTTP 기�
 
 여러 가지 기술적인 해결법이 있지만, FastJson2는 Vector API를 활용하여 더욱 빠른 매핑을 제공하는 것으로 보입니다. 이를 통해 JSON 데이터와 객체 간의 변환 속도가 크게 개선되었습니다.
 
-![fastjson 예시](assets/Pasted%20image%2020241027201212.png)
+![fastjson 예시](assets/20241027201212.png)
 
 > 출처: https://github.com/alibaba/fastjson2/blob/main/incubator-vector/src/main/java/com/alibaba/fastjson2/JSONReaderUTF8Vector.java
 
@@ -67,37 +67,37 @@ Java에는 예전부터 데이터를 저장하는 용도로 사용되는 객체�
 
 벡터는 일반적으로 위의 화살표 (→) 를 갖는 소문자의 형태로 표현 됩니다. =v
 
-![벡터표기](assets/Pasted%20image%2020241013215716.png)
+![벡터표기](assets/20241013215716.png)
 
 수학적으로 표시할 때 열벡터(Column)가 기본이고 행(Row)벡터로 표현시 아래와 같이 트랜스포즈(Transpose)하여 사용합니다.
 
-![백터 트랜스포즈](assets/Pasted%20image%2020241013214901.png)
+![백터 트랜스포즈](assets/20241013214901.png)
 
 이런 백터와 스칼라을 가지고 계산을 하게 됩니다.
 
 #### 벡터의 합
 
-![벡터의 합1](assets/Pasted%20image%2020241013214210.png)
+![벡터의 합1](assets/20241013214210.png)
 
-![벡터의 합2](assets/Pasted%20image%2020241013214226.png)
+![벡터의 합2](assets/20241013214226.png)
 
 
 #### 행렬곱
 
-![행렬곱1](assets/Pasted%20image%2020241013215512.png)
+![행렬곱1](assets/20241013215512.png)
 
-![행렬곱2](assets/Pasted%20image%2020241013215542.png)
+![행렬곱2](assets/20241013215542.png)
 
 
 #### 스칼라와 벡터/행렬의 곱셈
 
 벡터𝑥x또는 행렬𝐴A에 스칼라값𝑐c를 곱하는 것은**벡터𝑥x또는 행렬𝐴A의 모든 원소에 스칼라값𝑐c를 곱하는 것**과 같습니다.
 
-![백터계산](assets/Pasted%20image%2020241013214334.png)
+![백터계산](assets/20241013214334.png)
 
 행렬과 벡터 계산
 
-![행렬과 벡터계산](assets/Pasted%20image%2020241013220449.png)
+![행렬과 벡터계산](assets/20241013220449.png)
 
 두 벡터 𝑎⃗ 와 𝑏⃗ 의 내적은, 각 구성요소를 곱한 뒤 합한 값과 같습니다.
 
@@ -114,7 +114,7 @@ v ⋅ x = 1_5 + 2_6 + 3_7 + 4_8 = 70
 ## Vector API 와 SIMD
 
 
-![JEP 489](assets/Pasted%20image%2020241014201228.png)
+![JEP 489](assets/20241014201228.png)
 > 출처: https://openjdk.org/jeps/489
 
 Vector API는 벡터와 스칼라의 계산을 손쉽게 할 수 있는 API 메서드 시그니처를 제공합니다. 직접 계산하지 말고 편리하게 제공되는 객체를 도구로 이용하라는 것이죠.
@@ -128,23 +128,23 @@ x64 및 AArch64 CPU 아키텍처 기반에서 SIMD 병렬처리를 통해서 계
 
 SIMD는 병렬 컴퓨팅의 한 종류로, 하나의 명령어로 여러 개의 값을 동시에 계산하는 방식을 말합니다. 데이터 풀이 있으면 이를 여러개의 Process Unit 병렬로 처리를 합니다.
 
-![SIMD](assets/Pasted%20image%2020241013221616.png)
+![SIMD](assets/20241013221616.png)
 >출처: https://en.wikipedia.org/wiki/Single_instruction,_multiple_data
 
 
 SISD(Single Instruction Single Data) 프로세스를 이용하는 구조에서는 스칼라 연산의 경우에는 스칼라 인수로 피연산자를 하나씩 받은 이후, 각각의 프로세스에서 순차적으로 처리하게 됩니다.
 
 
-![SISD vs SIMD](assets/Pasted%20image%2020241013221707.png)
+![SISD vs SIMD](assets/20241013221707.png)
 > 출처: https://modulabs.co.kr/blog/simd-programming/
 
 처리하는 방법을 Stream으로 살펴보면 아래와 같습니다.
 
-![SISD vs SIMD](assets/Pasted%20image%2020241013221942.png)
+![SISD vs SIMD](assets/20241013221942.png)
 > 출처: https://johnnysswlab.com/crash-course-introduction-to-parallelism-simd-parallelism/
 
 더 알아보고 싶으신 분은 플린분류체계를 참고해보세요. (Flynn's taxonomy)
-![Flynn's taxonomy](assets/Pasted%20image%2020241014200841.png)
+![Flynn's taxonomy](assets/20241014200841.png)
 > 참고: https://ko.wikipedia.org/wiki/%ED%94%8C%EB%A6%B0_%EB%B6%84%EB%A5%98
 
 ---
@@ -216,7 +216,7 @@ Vector의 종류는 연산 크기에 따라 64비트에서 512비트까지 다�
 
 이러한 선택지를 통해 애플리케이션의 성능과 시스템 자원 활용을 최적화할 수 있습니다.
 
-![SPECIES](assets/Pasted%20image%2020241013220145.png)
+![SPECIES](assets/20241013220145.png)
 
 그 다음으로, 루프의 종료 조건을 설정합니다. `upperBound`는 벡터화된 루프가 언제 종료될지를 결정하는 값입니다. `SPECIES.loopBound(a.length)`는 배열 `a`의 길이를 벡터 길이의 배수로 내림 처리하여 반환하는데, 이는 벡터 연산이 배열의 경계를 넘어 실행되지 않도록 보장하는 역할을 합니다.
 
@@ -342,8 +342,8 @@ public class VectorLengthExample {
   } 
 }
 ```
-![루프바운트코드](assets/Pasted%20image%2020241013231728.png)
-![루프바운드결과](assets/Pasted%20image%2020241013231701.png)
+![루프바운트코드](assets/20241013231728.png)
+![루프바운드결과](assets/20241013231701.png)
 
 이처럼 벡터의 길이를 확인하는 것은, 앞서 살펴본 것처럼 루프 바운드를 계산하거나 벡터화된 루프에서 처리되지 않은 남은 요소들을 처리할 때 유용하게 활용됩니다. 벡터 길이를 알고 있으면 벡터 연산이 배열 경계를 넘어가지 않도록 하고, 남은 요소들을 스칼라 방식으로 정확하게 처리할 수 있습니다.
 
@@ -359,7 +359,7 @@ public class VectorLengthExample {
 
 실행 시점의 하드웨어 상태에 따라 Vector 연산과 Scalar 연산의 성능이 다소 혼재될 수 있습니다. 특히 개인용 노트북 환경에서는 연산 효율성의 차이가 크게 체감되지 않을 수 있습니다. 하지만 더 나은 하드웨어 환경에서는 Vector API의 성능 향상이 더 뚜렷하게 나타날 것으로 기대됩니다. 성능이 보장된 상용 서버 환경에서는 더욱 큰 효과를 볼 수 있겠죠.
 
-![실행예시](assets/Pasted%20image%2020241013233556.png)
+![실행예시](assets/20241013233556.png)
 
 ```java
 import jdk.incubator.vector.FloatVector;  
@@ -457,7 +457,7 @@ import java.util.Random;
 
 여러 가지 이유가 있겠지만, FastJson2는 Vector를 활용하여 성능을 높였습니다. 특히 ByteVector를 사용하여 64비트 연산을 수행하며, 이를 통해 서버 프로그래밍 환경에 최적화된 JSON 직렬화 및 역직렬화 기능을 제공합니다. 이러한 접근 방식 덕분에 대용량 데이터를 다루는 서버 환경에서 더욱 효율적인 처리 성능을 발휘할 수 있습니다.
 
-![Fastjson2](assets/Pasted%20image%2020241014203738.png)
+![Fastjson2](assets/20241014203738.png)
 
 ---
 ### 마무리하며
